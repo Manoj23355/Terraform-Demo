@@ -2,11 +2,6 @@ variable "cidr" {
   default = "10.0.0.0/16"
 }
 
-resource "aws_key_pair" "example" {
-  key_name   = "terraform-demo-abhi"  # Replace with your desired key name
-  public_key = file("~/.ssh/id_rsa.pub")  # Replace with the path to your public key file
-}
-
 resource "aws_vpc" "myvpc" {
   cidr_block = var.cidr
 }
@@ -70,7 +65,7 @@ resource "aws_security_group" "webSg" {
 resource "aws_instance" "server" {
   ami                    = "ami-0261755bbcb8c4a84"
   instance_type          = "t2.micro"
-  key_name      = aws_key_pair.example.key_name
+  key_name               = "Terraformdemo"
   vpc_security_group_ids = [aws_security_group.webSg.id]
   subnet_id              = aws_subnet.sub1.id
 }
