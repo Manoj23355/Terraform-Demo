@@ -2,6 +2,11 @@ variable "cidr" {
   default = "10.0.0.0/16"
 }
 
+variable "allowed_ports" {
+ type = list(number) 
+default = [22, 80, 443]
+}
+
 resource "aws_vpc" "myvpc" {
   cidr_block = var.cidr
 tags = {
@@ -39,20 +44,17 @@ resource "aws_security_group" "webSg" {
   name   = "web"
   vpc_id = aws_vpc.myvpc.id
 
-  ingress {
-    description = "HTTP from VPC"
+  dynamic "ingress" {
+    for_each = var.allowed_ports
+    
+    content{
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-  ingress {
-    description = "SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
   }
+  
 
   egress {
     from_port   = 0
